@@ -17,6 +17,11 @@ defmodule RingBuffer do
 
   A call to take/1 will cause :evicted to be set to nil.
   """
+  @typedoc """
+      Type that represents RingBuffer struct with :maxsize as integer,
+      :size as integer, :queue as tuple and :evicted as any
+  """
+  @type t :: %RingBuffer{max_size: integer, size: integer, queue: tuple, evicted: any}
   alias __MODULE__
 
   defstruct [:max_size, :size, :queue, :evicted]
@@ -33,6 +38,7 @@ defmodule RingBuffer do
       iex> RingBuffer.new(10)
       %RingBuffer{queue: {[], []}, max_size: 10, size: 0, evicted: nil}
   """
+  @spec new(max_size :: integer) :: RingBuffer.t()
   def new(max_size) when is_integer(max_size) and max_size > 0 do
     %RingBuffer{max_size: max_size, size: 0, queue: :queue.new(), evicted: nil}
   end
@@ -55,6 +61,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.empty?()
       false
   """
+  @spec empty?(buffer :: RingBuffer.t()) :: boolean
   def empty?(%RingBuffer{} = buffer) do
     :queue.is_empty(buffer.queue)
   end
@@ -88,6 +95,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.put("best")
       %RingBuffer{queue: {["best", "the"], ["is"]}, max_size: 3, size: 3, evicted: "elixir"}
   """
+  @spec put(buffer :: RingBuffer.t(), item :: any) :: RingBuffer.t()
   def put(%RingBuffer{} = buffer, item) when buffer.size < buffer.max_size do
     new_queue = :queue.in(item, buffer.queue)
     new_size = buffer.size + 1
@@ -125,6 +133,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.take()
       {nil, %RingBuffer{queue: {[], []}, max_size: 3, size: 0, evicted: nil}}
   """
+  @spec take(buffer :: RingBuffer.t()) :: {nil, RingBuffer.t()} | {any, RingBuffer.t()}
   def take(%RingBuffer{} = buffer) when buffer.size > 0 do
     {{:value, taken}, new_queue} = :queue.out(buffer.queue)
     new_size = buffer.size - 1
@@ -156,6 +165,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.oldest()
       nil
   """
+  @spec oldest(buffer :: RingBuffer.t()) :: nil | any
   def oldest(%RingBuffer{} = buffer) do
     case :queue.peek(buffer.queue) do
       {:value, item} -> item
@@ -184,6 +194,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.newest()
       nil
   """
+  @spec newest(buffer :: RingBuffer.t()) :: nil | any
   def newest(%RingBuffer{} = buffer) do
     case :queue.peek_r(buffer.queue) do
       {:value, item} -> item
