@@ -3,19 +3,19 @@ defmodule RingBuffer do
   RingBuffer provides an Elixir ring buffer implementation based on Erlang :queue.
 
   There are other fine Elxir libraries providing implementations of
-  ring or circular buffers. This one provides one wanted feature that the
+  ring or circular buffers. This one provides a wanted feature that the
   others did not provide, namely that the item that was evicted due to
-  a put/2 call is available for inspection at the end of the put/2 call.
+  a `put/2` call is available for inspection after completion of the `put/2` call.
   
-  In this implementation, put/2 returns the new RingBuffer to preserve the
+  In this implementation, `put/2` returns the new RingBuffer to preserve the
   abilty to build pipelines and the item that was evicted as the result of
-  the last call to put/2, if any, is available in the field :evicted.
+  the last call to `put/2`, if any, is available in the field `:evicted`.
   
-  If the :size of the buffer at the time of the last call to put/2 was less
-  than the configured :max_size, then :evicted will be nil after the call
-  to put/2 since adding the new item did not require evicting another item.
+  If the `:size` of the buffer at the time of the last call to `put/2` was less
+  than the configured `:max_size`, then :evicted will be `nil` after the call
+  to `put/2` since adding the new item did not require evicting another item.
 
-  A call to take/1 will cause :evicted to be set to nil.
+  A call to `take/1` will cause `:evicted` to be set to `nil`.
   """
   @typedoc """
       Type that represents RingBuffer struct with :maxsize as integer,
@@ -38,7 +38,7 @@ defmodule RingBuffer do
       iex> RingBuffer.new(10)
       %RingBuffer{queue: {[], []}, max_size: 10, size: 0, evicted: nil}
   """
-  @spec new(max_size :: integer) :: RingBuffer.t()
+  @spec new(max_size :: integer) :: t()
   def new(max_size) when is_integer(max_size) and max_size > 0 do
     %RingBuffer{max_size: max_size, size: 0, queue: :queue.new(), evicted: nil}
   end
@@ -61,7 +61,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.empty?()
       false
   """
-  @spec empty?(buffer :: RingBuffer.t()) :: boolean
+  @spec empty?(buffer :: t()) :: boolean
   def empty?(%RingBuffer{} = buffer) do
     :queue.is_empty(buffer.queue)
   end
@@ -95,7 +95,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.put("best")
       %RingBuffer{queue: {["best", "the"], ["is"]}, max_size: 3, size: 3, evicted: "elixir"}
   """
-  @spec put(buffer :: RingBuffer.t(), item :: any) :: RingBuffer.t()
+  @spec put(buffer :: t(), item :: any) :: t()
   def put(%RingBuffer{} = buffer, item) when buffer.size < buffer.max_size do
     new_queue = :queue.in(item, buffer.queue)
     new_size = buffer.size + 1
@@ -133,7 +133,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.take()
       {nil, %RingBuffer{queue: {[], []}, max_size: 3, size: 0, evicted: nil}}
   """
-  @spec take(buffer :: RingBuffer.t()) :: {nil, RingBuffer.t()} | {any, RingBuffer.t()}
+  @spec take(buffer :: t()) :: {nil, t()} | {any, t()}
   def take(%RingBuffer{} = buffer) when buffer.size > 0 do
     {{:value, taken}, new_queue} = :queue.out(buffer.queue)
     new_size = buffer.size - 1
@@ -165,7 +165,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.oldest()
       nil
   """
-  @spec oldest(buffer :: RingBuffer.t()) :: nil | any
+  @spec oldest(buffer :: t()) :: nil | any
   def oldest(%RingBuffer{} = buffer) do
     case :queue.peek(buffer.queue) do
       {:value, item} -> item
@@ -194,7 +194,7 @@ defmodule RingBuffer do
       ...> |> RingBuffer.newest()
       nil
   """
-  @spec newest(buffer :: RingBuffer.t()) :: nil | any
+  @spec newest(buffer :: t()) :: nil | any
   def newest(%RingBuffer{} = buffer) do
     case :queue.peek_r(buffer.queue) do
       {:value, item} -> item
