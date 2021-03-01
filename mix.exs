@@ -1,18 +1,20 @@
 defmodule RingBuffer.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/brsg/ring_buffer"
+  @version "0.1.0"
+
   def project do
     [
       app: :ring_buffer,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.11",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
-      name: "RingBuffer",
-      source_url: "https://github.com/brsg/ring_buffer"
+      source_url: @source_url
     ]
   end
 
@@ -33,21 +35,15 @@ defmodule RingBuffer.MixProject do
 
   defp description do
     """
-    `RingBuffer` is an implementation of a ring or circular buffer data
-     structure, internally based on Erlang's :queue, that offers a few
-     niceties such as access to the buffer item that is evicted when a
-     new item is added to a full buffer.
+    A ring or circular buffer data structure with extras.
     """
   end
   
   defp package do
     [
-      name: "ring_buffer",
-      organization: "brsg",
       maintainers: ["Dave Muirhhead", "Alan Strait"],
       licenses: ["Apache 2.0"],
-      links: %{"GitHub" => "https://github.com/brsg/ring_buffer",
-              "Docs" => "http://hexdocs.pm/ring_buffer/"}
+      links: %{"GitHub" => @source_url}
      ]
   end
 
