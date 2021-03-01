@@ -25,9 +25,9 @@ defmodule RingBuffer.MixProject do
   defp deps do
     [
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.1"},
-      {:ex_doc, "~> 0.11", only: :dev},
-      {:earmark, "~> 0.1", only: :dev}
+      {:dialyxir, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.11", only: :dev, runtime: false},
+      {:earmark, "~> 0.1", only: :dev, runtime: false}
     ]
   end
 
