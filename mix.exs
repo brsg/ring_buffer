@@ -20,7 +20,6 @@ defmodule RingBuffer.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
     ]
   end
 
@@ -44,7 +43,7 @@ defmodule RingBuffer.MixProject do
       maintainers: ["Dave Muirhhead", "Alan Strait"],
       licenses: ["Apache 2.0"],
       links: %{"GitHub" => @source_url}
-     ]
+    ]
   end
 
 end
