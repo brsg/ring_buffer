@@ -17,12 +17,13 @@ defmodule RingBuffer do
 
   A call to `take/1` will cause `:evicted` to be set to `nil`.
   """
+  alias __MODULE__
+
   @typedoc """
       Type that represents RingBuffer struct with `:maxsize` as integer,
       `:size` as integer, `:queue` as tuple and `:evicted` as any
   """
   @type t :: %RingBuffer{max_size: integer, size: integer, queue: tuple, evicted: any}
-  alias __MODULE__
 
   defstruct [:max_size, :size, :queue, :evicted]
 
